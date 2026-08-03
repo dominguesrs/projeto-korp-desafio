@@ -1,6 +1,6 @@
 # Projeto Korp — Desafio Técnico
 
-Ambiente completo em containers para o serviço `http-server-projeto-korp`, com proxy
+Ambiente completo em containers para o serviço `http-server-projeto-korp`, com proxy.
 reverso NGINX, monitoramento via Prometheus/Grafana e provisionamento 100% automatizado
 via Ansible.
 
