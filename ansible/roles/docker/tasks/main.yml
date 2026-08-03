@@ -1,0 +1,35 @@
+---
+- name: Verificar se o Docker já está instalado
+  command: docker --version
+  register: docker_check
+  ignore_errors: true
+  changed_when: false
+
+- name: Instalar o Docker via script oficial (get.docker.com)
+  ansible.builtin.shell: curl -fsSL https://get.docker.com | sh
+  when: docker_check.rc != 0
+
+- name: Garantir que o serviço Docker esteja ativo e habilitado
+  ansible.builtin.systemd:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Adicionar o usuário atual ao grupo docker (evita precisar de sudo)
+  ansible.builtin.user:
+    name: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+    groups: docker
+    append: true
+
+- name: Instalar o SDK Python do Docker (necessário para os módulos community.docker)
+  ansible.builtin.pip:
+    name: docker
+    state: present
+    extra_args: --break-system-packages
+  ignore_errors: true
+
+- name: Criar a rede Docker em modo bridge para o projeto
+  community.docker.docker_network:
+    name: "{{ docker_network_name }}"
+    driver: bridge
+    state: present

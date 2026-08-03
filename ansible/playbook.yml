@@ -1,0 +1,12 @@
+---
+- name: Provisionamento completo do ambiente - Projeto Korp
+  hosts: local
+  become: true
+  vars:
+    project_dir: "{{ playbook_dir }}/.."
+    docker_network_name: korp-network
+
+  roles:
+    - docker
+    - deploy
+    - validate

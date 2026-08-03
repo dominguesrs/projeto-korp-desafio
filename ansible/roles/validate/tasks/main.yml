@@ -1,0 +1,21 @@
+---
+- name: Aguardar o NGINX responder na porta 80
+  ansible.builtin.wait_for:
+    host: localhost
+    port: 80
+    delay: 5
+    timeout: 60
+
+- name: Fazer requisição HTTP de validação em /projeto-korp
+  ansible.builtin.uri:
+    url: http://localhost:80/projeto-korp
+    method: GET
+    return_content: true
+  register: validacao_resposta
+  retries: 5
+  delay: 3
+  until: validacao_resposta.status == 200
+
+- name: Exibir a resposta do serviço no console
+  ansible.builtin.debug:
+    msg: "Resposta do serviço: {{ validacao_resposta.content }}"

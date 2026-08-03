@@ -1,0 +1,18 @@
+---
+- name: Confirmar diretório do projeto utilizado
+  ansible.builtin.debug:
+    msg: "Usando arquivos do projeto em {{ project_dir }}"
+
+- name: Build da imagem http-server-projeto-korp
+  community.docker.docker_image:
+    name: http-server-projeto-korp
+    build:
+      path: "{{ project_dir }}/app"
+    source: build
+    force_source: true
+
+- name: Subir todos os containers com Docker Compose (app, nginx, prometheus, grafana)
+  community.docker.docker_compose_v2:
+    project_src: "{{ project_dir }}"
+    state: present
+    build: always
